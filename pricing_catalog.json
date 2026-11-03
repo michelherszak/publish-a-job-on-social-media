@@ -1,0 +1,11 @@
+{
+  "starter": {"name":"Starter","cents":1900,"tokens":250,"seats":3,"kind":"subscription","interval":"month"},
+  "team": {"name":"Team","cents":6900,"tokens":1500,"seats":10,"kind":"subscription","interval":"month"},
+  "scale": {"name":"Scale","cents":14900,"tokens":4000,"seats":25,"kind":"subscription","interval":"month"},
+  "starter_yearly": {"name":"Starter Jahresabo","cents":19000,"tokens":250,"seats":3,"kind":"subscription","interval":"year"},
+  "team_yearly": {"name":"Team Jahresabo","cents":69000,"tokens":1500,"seats":10,"kind":"subscription","interval":"year"},
+  "scale_yearly": {"name":"Scale Jahresabo","cents":149000,"tokens":4000,"seats":25,"kind":"subscription","interval":"year"},
+  "tokens_250": {"name":"250 MH-Tokens","cents":1200,"tokens":250,"kind":"payment"},
+  "tokens_1000": {"name":"1.000 MH-Tokens","cents":3900,"tokens":1000,"kind":"payment"},
+  "tokens_2500": {"name":"2.500 MH-Tokens","cents":8900,"tokens":2500,"kind":"payment"}
+}

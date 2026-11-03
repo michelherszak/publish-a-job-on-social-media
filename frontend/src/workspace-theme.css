@@ -1,0 +1,134 @@
+/* Workspace palette shared with the public landing page. Keep route-specific marketing styles in landing.css. */
+:root {
+  --bg: #fbfaf7;
+  --panel: #fff;
+  --panel2: #f1f3eb;
+  --line: #dfe4d8;
+  --muted: #606b63;
+  --muted2: #748072;
+  --violet: #657948;
+  --aqua: #80962d;
+  --green: #5d7544;
+  --amber: #8a652a;
+  --ink: #202c28;
+  --lime: #d4ec70;
+}
+body:has(.shell), body:has(.login-page) {
+  color: var(--ink);
+  background: var(--bg);
+}
+.shell { color: var(--ink); }
+.sidebar {
+  background: #f1f3eb;
+  border-color: #dfe4d8;
+  backdrop-filter: none;
+}
+.brand-mark {
+  color: #202c28;
+  background: var(--lime);
+  box-shadow: none;
+}
+.brand span, .nav-label, .bottom-label { color: #687768; }
+.nav-item { color: #536359; }
+.nav-item:hover { color: var(--ink); background: #e8ecdf; }
+.nav-item.active {
+  color: var(--ink);
+  border-color: #c7d795;
+  background: #e3edbd;
+  box-shadow: none;
+}
+.nav-item em { color: #344b29; background: #d4ec70; }
+.user-card, .icon-btn, .ghost, .ghost-small, .close {
+  color: var(--ink);
+  background: #fff;
+  border-color: var(--line);
+}
+.avatar, .company-logo { color: var(--ink); background: #e3edbd; }
+.search input, .comment-form input, .integration-row input, .login-card input, .form-grid input, .form-grid textarea, .form-grid select, .campaign-select, .demo-toolbar-controls select {
+  color: var(--ink);
+  background: #fff;
+  border-color: #ccd7c2;
+}
+.search input::placeholder, .comment-form input::placeholder, .form-grid input::placeholder, .form-grid textarea::placeholder { color: #788476; }
+.search>svg, .search kbd { color: #687768; }
+.search kbd { background: #f1f3eb; }
+.icon-btn i { background: #80962d; box-shadow: none; }
+.primary {
+  color: #fff;
+  background: #202c28;
+  box-shadow: none;
+}
+.primary:hover { background: #384b3f; }
+.primary:focus-visible, .ghost:focus-visible, .ghost-small:focus-visible, .icon-btn:focus-visible, .nav-item:focus-visible, .text-btn:focus-visible, .shell input:focus-visible, .shell textarea:focus-visible, .shell select:focus-visible, .login-page input:focus-visible, .login-page button:focus-visible {
+  outline: 3px solid #80962d;
+  outline-offset: 2px;
+}
+.eyebrow, .mini, .stat-card small, .table-head { color: #66755e; }
+.panel {
+  background: #fff;
+  border-color: #dfe4d8;
+  box-shadow: 0 9px 25px rgba(32,44,40,.05);
+  backdrop-filter: none;
+}
+.stat-card:after { background: #e3edbd; }
+.stat-card span, .campaign-main>div>span, .activity span, .customer-open>span, .table-row small, .editor-toolbar>span, .approval-card p, .form-grid label, .login-card label, .demo-toolbar-intro p, .demo-toolbar-controls label { color: #667568; }
+.text-btn { color: #526a36; }
+.campaign-row, .chips i, .soft-badge, .channel-picker button, .history-list button {
+  color: #536359;
+  background: #f8f9f4;
+  border-color: #e1e7da;
+}
+.campaign-row:hover, .table-button:hover { background: #f1f5e9; border-color: #c7d795; }
+.company-logo { color: #273c2b; background: #e3edbd; }
+.status.review { color: #70501d; background: #fff1d6; border-color: #e6c78f; }
+.status.live { color: #275b3e; background: #e4f2e6; border-color: #b5d4bd; }
+.status.draft { color: #4e642e; background: #edf3db; border-color: #cbdba4; }
+.activity, .table-row, .divider, .metric-row, .user-list>div, .integration-row { border-color: var(--line); }
+.activity-icon { color: #526a36; background: #edf3db; }
+.channel-picker button.selected {
+  color: #344b29;
+  background: #e3edbd;
+  border-color: #b9cf67;
+}
+.history-compare pre {
+  color: var(--ink);
+  background: #fbfcf8;
+  border-color: #dfe4d8;
+}
+.preview-card { background: #f5f7ef; color: var(--ink); box-shadow: 0 12px 26px rgba(32,44,40,.09); }
+.preview-head, .preview-body { background: #fff; }
+.preview-media { color: var(--ink); background: linear-gradient(135deg,#e3edbd,#c8db91 55%,#a9c778); }
+.preview-cta { background: #f1f3eb; }
+.preview-cta button { color: #fff; background: #202c28; }
+.pipeline-bar { background: #edf0e7; }
+.pipeline-bar>div.draft { background: #bdcf91; }
+.pipeline-bar>div.review { background: #e7c780; }
+.pipeline-bar>div.live { background: #648754; }
+.modal { color: var(--ink); background: #fbfaf7; box-shadow: 0 30px 90px rgba(32,44,40,.2); }
+.form-grid input, .form-grid textarea { background: #fff; }
+.login-card { color: var(--ink); background: #fff; border: 1px solid var(--line); box-shadow: 0 18px 45px rgba(32,44,40,.08); }
+.login-card p, .login-help, .login-return { color: #596b50; }
+.login-plan { color: #344b29; background: #e3edbd; }
+.activity-popover { color: var(--ink); background: #fff; border: 1px solid var(--line); box-shadow: 0 16px 35px rgba(32,44,40,.1); }
+.error { color: #8a302b; background: #fff0ec; border-color: #e8b9ad; }
+.demo-toolbar { background: #e8eecf; border-color: #c7d795; }
+.customer-card.selected, .history-list button.active { border-color: #80962d; }
+.customer-delete { color: #8a302b; background: #fff0ec; border-color: #e8b9ad; }
+.token-wallet p { color: var(--muted); }
+
+/* Billing appears inside the workspace, while registration keeps its own light layout. */
+.shell .pay-page { color: var(--ink); }
+.shell .pay-page p, .shell .pay-summary small, .shell .pay-summary span, .shell .pay-ledger small { color: var(--muted); }
+.shell .pay-title>div>span, .shell .pay-kicker { color: #647947; }
+.shell .pay-summary>div, .shell .pay-products>article {
+  color: var(--ink);
+  background: #fff;
+  border-color: var(--line);
+}
+.shell .pay-page button { color: #fff; background: #202c28; border-color: #202c28; }
+.shell .pay-page button:hover { background: #384b3f; }
+.shell .pay-notice { color: #344b29; background: #edf4d5; border-color: #c7d795; }
+.shell .pay-warning { color: #70501d!important; background: #fff1d6!important; border-color: #e6c78f!important; }
+.shell .pay-error { color: #8a302b!important; background: #fff0ec; border-color: #e8b9ad; }
+.shell .pay-country select { color: var(--ink); background: #fff; border-color: #ccd7c2; }
+.shell .pay-ledger>div { border-color: var(--line); }

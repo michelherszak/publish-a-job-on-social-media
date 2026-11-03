@@ -1,0 +1,32 @@
+{
+  "name": "mh-recruiting-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build --manifest && vite build --ssr src/entry-jobs.tsx --outDir dist/server --emptyOutDir false && node scripts/prerender.mjs",
+    "preview": "node scripts/serve.mjs",
+    "build:public": "tsc -b && vite build --manifest && vite build --ssr src/entry-jobs.tsx --outDir dist/server --emptyOutDir false && node scripts/prerender.mjs --public",
+    "start": "node scripts/serve.mjs",
+    "test:seo": "node scripts/verify.mjs",
+    "test:language": "node scripts/verify-language.mjs",
+    "test:job-seo": "node scripts/verify-job-seo.mjs",
+    "test:onboarding": "node scripts/verify-onboarding.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "lucide-react": "^0.468.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.7"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "jsqr": "^1.4.0"
+  }
+}

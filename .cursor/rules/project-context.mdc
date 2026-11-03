@@ -1,0 +1,14 @@
+---
+description: Read the canonical MH product and implementation handoff before making changes
+alwaysApply: true
+---
+
+# MH context rule
+
+Read `PROJECT_CONTEXT.md` before planning or editing this project.
+
+Use `BILLING_SETUP.md` for Stripe and EU-payment work and `README.md` for local operation and SEO.
+
+Keep `PROJECT_CONTEXT.md` current when a change affects product behavior, pricing, architecture, deployment status, security, billing, or the next-step list.
+
+Never claim that Stripe is live, that external AI generates content, or that campaigns publish automatically unless the implementation and configuration have been verified.

@@ -1,0 +1,16 @@
+frontend/node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+backend/__pycache__/
+backend/*.db
+backend/demo_credentials.txt
+backend/integration_settings.json
+backend/integration_settings.json.*.tmp
+.DS_Store
+
+frontend/.env*.local
+
+backend/.env.local
+backend/.env.*.local
+backend/.auth.key
+backend/mail_outbox/

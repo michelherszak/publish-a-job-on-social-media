@@ -1,0 +1,6 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.5
+cryptography==46.0.3
+certifi==2025.10.05
+Pillow==12.0.0

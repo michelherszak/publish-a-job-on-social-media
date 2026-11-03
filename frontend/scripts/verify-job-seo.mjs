@@ -1,0 +1,43 @@
+import assert from 'node:assert/strict';
+import {createServer} from 'node:http';
+import {mkdtemp,cp,readFile,writeFile,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+import {spawn} from 'node:child_process';
+import {once} from 'node:events';
+import {createHash} from 'node:crypto';
+import {pageHtml,jobSchema,originValue} from './jobs-seo.mjs';
+import * as renderer from '../dist/server/entry-jobs.js';
+const site='https://jobs.example.invalid';
+const job={id:7,title:'Pflegefachkraft (m/w/d)',company:'Fiktiver Pflegedienst & Team',location:'Berlin',text:'# Pflegefachkraft\n\n## Deine Aufgaben\n- Menschen begleiten\n- Dokumentieren\n\n## Das bieten wir\nNur ein fiktiver Test. </script><img src=x onerror=alert(1)>',employment:'part_time',work_mode:'onsite',salary:'3.500 EUR monatlich · fiktiv',date_posted:Math.floor(Date.now()/1000)-86400,ends_at:Math.floor(Date.now()/1000)+86400,image:true,contact_email:'fixture@example.test',privacy_url:'https://example.test/privacy',retention_days:7,test:false};
+let closed=false,failed=false,test=false;const requests=[];
+const api=createServer((req,res)=>{requests.push({url:req.url,cookie:req.headers.cookie});res.setHeader('Content-Type','application/json');if(failed){res.writeHead(503);return res.end('{}');}const path=new URL(req.url,'http://localhost').pathname;if(path==='/jobs/7'){res.writeHead(closed?404:200);return res.end(JSON.stringify(closed?{}:{...job,test}));}if(path==='/jobs/sitemap')return res.end(JSON.stringify({test,jobs:closed?[]:[{id:7,updated_at:job.date_posted}]}));if(path==='/jobs')return res.end(JSON.stringify({test,jobs:closed?[]:[job],total:closed?0:1,companies:[job.company]}));res.writeHead(404);res.end('{}');});
+await new Promise(resolve=>api.listen(0,'127.0.0.1',resolve));const apiOrigin='http://127.0.0.1:'+api.address().port;
+const template=await readFile('dist/jobs/index.html','utf8');
+const render=(path,enabled=true)=>pageHtml({url:new URL(path,site),template,renderer,api:apiOrigin,site,enabled,css:[]});
+const temp=await mkdtemp(join(tmpdir(),'mh-job-seo-'));let server;
+try{
+ const page=await render('/jobs/7?mh_link=tracking_ignored');
+ assert.equal(page.status,200);assert.equal(page.robots,'index, follow, max-image-preview:large');
+ assert.equal((page.html.match(/<h1[ >]/g)||[]).length,1);assert.ok(page.html.includes('Pflegefachkraft'));assert.ok(page.html.includes('<li>Menschen begleiten</li>'));assert.match(page.html,/rel="canonical" href="https:\/\/jobs.example.invalid\/jobs\/7"/);assert.doesNotMatch(page.html,/<img src=x onerror/);
+ const schema=JSON.parse(page.html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);assert.equal(schema['@type'],'JobPosting');assert.equal(schema.title,job.title);assert.equal(schema.hiringOrganization.name,job.company);assert.equal(schema.datePosted,new Date(job.date_posted*1000).toISOString().slice(0,10));assert.equal(schema.validThrough,new Date(job.ends_at*1000).toISOString());assert.equal(schema.jobLocation.address.addressCountry,'DE');assert.equal(schema.employmentType,'PART_TIME');assert.equal(schema.baseSalary,undefined);assert.match(schema.description,/Menschen begleiten/);assert.equal(schema.directApply,true);
+ assert.equal(jobSchema({...job,date_posted:0},site,'description'),null,'Do not invent a publication date');
+ const remote=jobSchema({...job,work_mode:'remote'},site,'description');assert.equal(remote.jobLocation,undefined);assert.equal(remote.jobLocationType,'TELECOMMUTE');assert.equal(remote.applicantLocationRequirements.name,'DE');
+ assert.match(page.html,/property="og:title"/);assert.match(page.html,/property="og:image"/);assert.match(page.html,/id="application"/);assert.match(page.html,/method="post"/);assert.match(page.html,/<button[^>]+disabled=""/);
+ assert.match((await render('/jobs')).html,/href="\/jobs\/7"/);assert.doesNotMatch((await render('/jobs')).html,/"@type":"JobPosting"/);
+ assert.equal((await render('/jobs?q=Pflege')).robots,'noindex, follow');assert.match((await render('/jobs?page=2')).html,/canonical" href="https:\/\/jobs.example.invalid\/jobs\?page=2"/);assert.equal((await render('/jobs?page=bad')).status,400);
+ const unpublished=await render('/jobs/7',false);assert.equal(unpublished.robots,'noindex, follow');assert.doesNotMatch(unpublished.html,/"@type":"JobPosting"/);
+ assert.throws(()=>originValue('https://user:password@example.test'));assert.throws(()=>originValue('https://example.test/private'));
+ await cp(resolve('dist'),join(temp,'dist'),{recursive:true});const index=join(temp,'dist/index.html');await writeFile(index,(await readFile(index,'utf8')).replace('</head>',`<link rel="canonical" href="${site}/"></head>`));
+ server=spawn(process.execPath,[resolve('scripts/serve.mjs')],{cwd:temp,env:{...process.env,HOST:'127.0.0.1',PORT:'0',JOBS_API_ORIGIN:apiOrigin,JOBS_INDEXABLE:'1'},stdio:['ignore','pipe','pipe']});
+ const output=await Promise.race([once(server.stdout,'data'),once(server,'exit').then(()=>{throw Error('SEO server failed to start');})]);
+ const port=String(output[0]).match(/:(\d+)\s*$/)?.[1];assert.ok(port&&port!=='0');const base='http://127.0.0.1:'+port;
+ const live=await fetch(base+'/jobs/7');assert.equal(live.status,200);assert.match(live.headers.get('x-robots-tag'),/^index/);const html=await live.text();for(const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)){if(script[1])assert.ok(live.headers.get('content-security-policy').includes(createHash('sha256').update(script[1]).digest('base64')));}
+ assert.equal((await fetch(base+'/jobs/7',{method:'HEAD'})).status,200);assert.equal((await fetch(base+'/jobs/7/10')).status,404);assert.equal((await fetch(base+'/server/entry-jobs.js')).status,404);assert.equal((await fetch(base+'/.vite/manifest.json')).status,404);assert.equal((await fetch(base+'/jobs/7/',{redirect:'manual'})).status,308);
+ assert.match(await (await fetch(base+'/sitemap.xml')).text(),/<loc>https:\/\/jobs.example.invalid\/jobs\/7<\/loc>/);assert.match(await (await fetch(base+'/robots.txt')).text(),/Sitemap: https:\/\/jobs.example.invalid\/sitemap.xml/);
+ closed=true;const gone=await fetch(base+'/jobs/7');assert.equal(gone.status,404);assert.match(gone.headers.get('x-robots-tag'),/noindex/);assert.doesNotMatch(await gone.text(),/JobPosting|mh-job-bootstrap/);assert.doesNotMatch(await (await fetch(base+'/sitemap.xml')).text(),/\/jobs\/7/);
+ closed=false;test=true;const preview=await fetch(base+'/jobs/7');assert.match(preview.headers.get('x-robots-tag'),/noindex/);assert.doesNotMatch(await preview.text(),/"@type":"JobPosting"/);
+ failed=true;const offline=await fetch(base+'/jobs/7');assert.equal(offline.status,503);assert.equal(offline.headers.get('retry-after'),'60');assert.equal((await fetch(base+'/sitemap.xml')).status,503);
+ assert.ok(requests.every(r=>!r.cookie));
+ console.log('Job SEO checks passed: initial HTML, true 404/503, escaped content, schema, canonical/share metadata, sitemap lifecycle, preview gates, CSP and server-file isolation.');
+}finally{server?.kill();api.closeAllConnections();await new Promise(resolve=>api.close(resolve));await rm(temp,{recursive:true,force:true});}
